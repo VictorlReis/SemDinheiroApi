@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SemDinheiroApi.Databases.Models;
 
-namespace SemDinheiroapi.Databases;
+namespace SemDinheiroApi.Databases;
 
 public class AppDbContext : DbContext
 {

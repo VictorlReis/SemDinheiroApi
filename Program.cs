@@ -1,8 +1,13 @@
 using System.Text;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using SemDinheiroapi.Databases;
+using SemDinheiroApi.Commands;
+using SemDinheiroApi.Databases;
+using SemDinheiroApi.Handlers;
+using SemDinheiroApi.Queries;
+using SemDinheiroApi.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +27,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
         };
     });
+
+builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+
+builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -54,29 +64,15 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+app.MapGet("/transactions/{userId}", async (string userId, IMediator mediator) 
+    => await mediator.Send(new GetTransactionsQuery(userId)));
+app.MapPost("/transaction", async (CreateTransactionCommand command, IMediator mediator) 
+    => await mediator.Send(command));
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+app.MapPut("/transaction", async (UpdateTransactionCommand command, IMediator mediator) 
+    => await mediator.Send(command));
+
+app.MapDelete("/transaction/{id:int}", async (int id, IMediator mediator) 
+    => await mediator.Send(new DeleteTransactionCommand(id)));
 
 app.Run();
-
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
