@@ -48,7 +48,6 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Migrate the database
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -63,7 +62,6 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -86,12 +84,5 @@ app.MapPut("/transaction", async (UpdateTransactionRequest request, IMediator me
 
 app.MapDelete("/transaction/{id:int}", async (int id, IMediator mediator) 
     => await mediator.Send(new DeleteTransactionRequest(id)));
-
-//CRUD
-
-//CREATE
-//REMOVE
-//UPDATE
-//DELETE
 
 app.Run();

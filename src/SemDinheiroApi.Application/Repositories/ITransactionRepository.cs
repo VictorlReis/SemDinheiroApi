@@ -1,5 +1,4 @@
-﻿using SemDinheiroApi.Databases.Models;
-using SemDinheiroApi.Databases.Models.Domain;
+﻿using SemDinheiroApi.Databases.Models.Domain;
 
 namespace SemDinheiroApi.Repositories;
 

@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using SemDinheiroApi.Requests;
-using SemDinheiroApi.Databases.Models;
 using SemDinheiroApi.Repositories;
 
 namespace SemDinheiroApi.Handlers;

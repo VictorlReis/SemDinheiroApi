@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
 using SemDinheiroApi.Requests;
-using SemDinheiroApi.Databases.Models;
 using SemDinheiroApi.Databases.Models.Domain;
 using SemDinheiroApi.Repositories;
 
