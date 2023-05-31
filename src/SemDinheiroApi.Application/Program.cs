@@ -3,7 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using SemDinheiroApi.Commands;
+using SemDinheiroApi.Requests;
 using SemDinheiroApi.Databases;
 using SemDinheiroApi.Queries;
 using SemDinheiroApi.Repositories;
@@ -29,6 +29,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 
@@ -77,14 +78,14 @@ app.UseHttpsRedirection();
 app.MapGet("/transactions/{userId}", async (string userId, IMediator mediator) 
     => await mediator.Send(new GetTransactionsQuery(userId)));
 
-app.MapPost("/transaction", async (CreateTransactionCommand command, IMediator mediator) 
-    => await mediator.Send(command));
+app.MapPost("/transaction", async (CreateTransactionRequest request, IMediator mediator) 
+    => await mediator.Send(request));
 
-app.MapPut("/transaction", async (UpdateTransactionCommand command, IMediator mediator) 
-    => await mediator.Send(command));
+app.MapPut("/transaction", async (UpdateTransactionRequest request, IMediator mediator) 
+    => await mediator.Send(request));
 
 app.MapDelete("/transaction/{id:int}", async (int id, IMediator mediator) 
-    => await mediator.Send(new DeleteTransactionCommand(id)));
+    => await mediator.Send(new DeleteTransactionRequest(id)));
 
 //CRUD
 

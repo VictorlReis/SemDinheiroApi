@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SemDinheiroApi.Databases.Models;
+using SemDinheiroApi.Databases.Models.Domain;
 
 namespace SemDinheiroApi.Databases;
 

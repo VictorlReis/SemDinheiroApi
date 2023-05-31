@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SemDinheiroApi.Databases;
 using SemDinheiroApi.Databases.Models;
+using SemDinheiroApi.Databases.Models.Domain;
+
 namespace SemDinheiroApi.Repositories;
 
 public class TransactionRepository : ITransactionRepository

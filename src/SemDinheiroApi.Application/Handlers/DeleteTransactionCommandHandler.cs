@@ -1,11 +1,11 @@
 ﻿using MediatR;
-using SemDinheiroApi.Commands;
+using SemDinheiroApi.Requests;
 using SemDinheiroApi.Databases.Models;
 using SemDinheiroApi.Repositories;
 
 namespace SemDinheiroApi.Handlers;
 
-public class DeleteTransactionCommandHandler : IRequestHandler<DeleteTransactionCommand, bool>
+public class DeleteTransactionCommandHandler : IRequestHandler<DeleteTransactionRequest, bool>
 {
     private readonly ITransactionRepository _transactionRepository;
 
@@ -14,7 +14,7 @@ public class DeleteTransactionCommandHandler : IRequestHandler<DeleteTransaction
         _transactionRepository = transactionRepository;
     }
 
-    public async Task<bool> Handle(DeleteTransactionCommand request, CancellationToken cancellationToken)
+    public async Task<bool> Handle(DeleteTransactionRequest request, CancellationToken cancellationToken)
     {
         return await _transactionRepository.DeleteAsync(request.Id);
     }

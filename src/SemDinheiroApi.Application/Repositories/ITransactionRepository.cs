@@ -1,4 +1,6 @@
 ﻿using SemDinheiroApi.Databases.Models;
+using SemDinheiroApi.Databases.Models.Domain;
+
 namespace SemDinheiroApi.Repositories;
 
 public interface ITransactionRepository
