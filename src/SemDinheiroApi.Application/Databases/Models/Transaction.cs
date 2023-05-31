@@ -14,5 +14,6 @@ public class Transaction
     public DateTime Date { get; set; }
     public bool Fixed { get; set; }
     public string Tag { get; set; }
+    public decimal Value { get; set; }
     public string UserId { get; set; } // Este é o ID do usuário do provedor OAuth
 }
