@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SemDinheiroApi.Commands;
 using SemDinheiroApi.Databases;
-using SemDinheiroApi.Handlers;
 using SemDinheiroApi.Queries;
 using SemDinheiroApi.Repositories;
 
@@ -77,6 +76,7 @@ app.UseHttpsRedirection();
 
 app.MapGet("/transactions/{userId}", async (string userId, IMediator mediator) 
     => await mediator.Send(new GetTransactionsQuery(userId)));
+
 app.MapPost("/transaction", async (CreateTransactionCommand command, IMediator mediator) 
     => await mediator.Send(command));
 
@@ -85,5 +85,12 @@ app.MapPut("/transaction", async (UpdateTransactionCommand command, IMediator me
 
 app.MapDelete("/transaction/{id:int}", async (int id, IMediator mediator) 
     => await mediator.Send(new DeleteTransactionCommand(id)));
+
+//CRUD
+
+//CREATE
+//REMOVE
+//UPDATE
+//DELETE
 
 app.Run();
