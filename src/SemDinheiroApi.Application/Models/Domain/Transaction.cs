@@ -3,7 +3,7 @@
 public enum TransactionType
 {
     Expense,
-    Recipe
+    Income
 }
 
 public class Transaction
