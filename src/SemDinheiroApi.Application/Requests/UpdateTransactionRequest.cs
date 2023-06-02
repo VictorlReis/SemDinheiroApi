@@ -4,4 +4,6 @@ using SemDinheiroApi.Responses;
 
 namespace SemDinheiroApi.Requests;
 
-public record UpdateTransactionRequest(Transaction Transaction) : IRequest<UpdateTransactionResponse>;
+public record UpdateTransactionRequest(int Id, string Description, TransactionType Type, 
+    DateTime StartDate, string PaymentMethod, string Tag, 
+    decimal Value, string UserId) : IRequest<UpdateTransactionResponse>;

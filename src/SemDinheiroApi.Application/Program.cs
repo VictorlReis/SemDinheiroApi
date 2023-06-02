@@ -73,8 +73,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseHttpsRedirection();
 
-app.MapGet("/transactions/{userId}", async (string userId, IMediator mediator) 
-    => await mediator.Send(new GetTransactionsQuery(userId)));
+app.MapGet("/transactions/{userId}", async (string userId, int year, int month, IMediator mediator) 
+    => await mediator.Send(new GetTransactionsQuery(userId, year, month)));
 
 app.MapPost("/transaction", async (CreateTransactionRequest request, IMediator mediator) 
     => await mediator.Send(request));

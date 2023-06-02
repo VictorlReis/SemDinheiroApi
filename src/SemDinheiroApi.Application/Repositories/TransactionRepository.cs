@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SemDinheiroApi.Databases;
 using SemDinheiroApi.Databases.Models.Domain;
+using SemDinheiroApi.Responses;
 
 namespace SemDinheiroApi.Repositories;
 
@@ -12,24 +13,31 @@ public class TransactionRepository : ITransactionRepository
     {
         _context = context;
     }
-    
-    public async Task<IEnumerable<Transaction>> GetByUserIdAsync(string userId)
+
+    public async Task<Transaction?> GetById(int id)
     {
-        return await _context.Transactions.Where(t => t.UserId == userId).ToListAsync();
+        return await _context.Transactions.FindAsync(id);
     }
 
-    public async Task<Transaction> CreateAsync(Transaction transaction)
+    public async Task<IEnumerable<Transaction?>> GetByUserIdAsync(string userId, int year, int month)
+    {
+        return await _context.Transactions
+            .Where(t => t != null && t.UserId == userId && t.StartDate.Year == year && t.StartDate.Month == month)
+            .ToListAsync();
+    }
+
+    public async Task<CreateTransactionResponse> CreateAsync(Transaction? transaction)
     {
         _context.Transactions.Add(transaction);
         await _context.SaveChangesAsync();
-        return transaction;
+        return new CreateTransactionResponse(transaction.Id);
     }
 
-    public async Task<Transaction> UpdateAsync(Transaction transaction)
+    public async Task<UpdateTransactionResponse?> UpdateAsync(Transaction? transaction)
     {
         _context.Transactions.Update(transaction);
         await _context.SaveChangesAsync();
-        return transaction;
+        return new UpdateTransactionResponse(transaction.Id);
     }
 
     public async Task<bool> DeleteAsync(int id)

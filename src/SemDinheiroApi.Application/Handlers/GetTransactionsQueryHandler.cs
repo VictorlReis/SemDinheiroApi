@@ -22,6 +22,6 @@ public class GetTransactionsQueryHandler : IRequestHandler<GetTransactionsQuery,
 
     public async Task<IEnumerable<GetTransactionsResponse>> Handle(GetTransactionsQuery request, CancellationToken cancellationToken)
     {
-        return _mapper.Map<IEnumerable<GetTransactionsResponse>>(await _transactionRepository.GetByUserIdAsync(request.UserId));
+        return _mapper.Map<IEnumerable<GetTransactionsResponse>>(await _transactionRepository.GetByUserIdAsync(request.UserId, request.Year, request.Month));
     }
 }
