@@ -18,5 +18,8 @@ public class TransactionProfile : Profile
         
         CreateMap<Transaction, UpdateTransactionResponse>()
             .ReverseMap();
+        
+        CreateMap<Transaction, UpdateTransactionRequest>()
+            .ReverseMap();
     }
 }
