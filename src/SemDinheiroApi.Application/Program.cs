@@ -1,10 +1,15 @@
+using System.Globalization;
 using System.Text;
+using CsvHelper;
+using CsvHelper.Configuration;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.VisualBasic;
 using SemDinheiroApi.Requests;
 using SemDinheiroApi.Databases;
+using SemDinheiroApi.Databases.Models.Domain;
 using SemDinheiroApi.Queries;
 using SemDinheiroApi.Repositories;
 
@@ -84,5 +89,38 @@ app.MapPut("/transaction", async (UpdateTransactionRequest request, IMediator me
 
 app.MapDelete("/transaction/{id:int}", async (int id, IMediator mediator) 
     => await mediator.Send(new DeleteTransactionRequest(id)));
+
+app.MapPost("/transactions/xp", async (int month, int year, IFormFile file, IMediator mediator) =>
+{
+    using var reader = new StreamReader(file.OpenReadStream());
+
+    var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+    {
+        Delimiter = ";"
+    };
+
+    using var csv = new CsvReader(reader, config);
+
+    var transactions = new List<Transaction>();
+    const string userId = "string";
+
+    var csvTransactions = csv.GetRecords<CsvTransaction>();
+
+    foreach (var csvTransaction in csvTransactions)
+    {
+        var textValue = csvTransaction.Valor.Replace("R$ ", "").Replace(".", "").Replace(',', '.').Trim();
+        if (textValue.Contains('-')) continue;
+
+        var valor = decimal.Parse(textValue, CultureInfo.InvariantCulture);
+        
+        if(valor < 0) continue;
+
+        await mediator.Send(new CreateTransactionRequest(csvTransaction.Estabelecimento, TransactionType.Expense,
+                new DateTime(year, month, 01), "xXP", "zXp", valor, userId));
+    }
+
+    return Results.Ok(transactions);
+});
+
 
 app.Run();
