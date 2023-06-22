@@ -6,7 +6,6 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.VisualBasic;
 using SemDinheiroApi.Requests;
 using SemDinheiroApi.Databases;
 using SemDinheiroApi.Databases.Models.Domain;
@@ -90,7 +89,7 @@ app.MapPut("/transaction", async (UpdateTransactionRequest request, IMediator me
 app.MapDelete("/transaction/{id:int}", async (int id, IMediator mediator) 
     => await mediator.Send(new DeleteTransactionRequest(id)));
 
-app.MapPost("/transactions/xp", async (int month, int year, IFormFile file, IMediator mediator) =>
+app.MapPost("/transactions/csv", async (IFormFile file, IMediator mediator) =>
 {
     using var reader = new StreamReader(file.OpenReadStream());
 
@@ -116,10 +115,41 @@ app.MapPost("/transactions/xp", async (int month, int year, IFormFile file, IMed
         if(valor < 0) continue;
 
         await mediator.Send(new CreateTransactionRequest(csvTransaction.Estabelecimento, TransactionType.Expense,
-                new DateTime(year, month, 01), "xXP", "zXp", valor, userId));
+                new DateTime(2023, 06, 01), "xXP", "zXp", valor, userId));
     }
 
     return Results.Ok(transactions);
+});
+
+app.MapPost("transaction/seed", async (IMediator mediator) =>
+{
+    string[] lines =
+    {
+        "test 1/3\tR$ 48,00\ttest\ttest"
+    };
+    
+    foreach (var line in lines)
+    {
+        var values = line.Split('\t');
+        
+        var description = values[0];
+        var valueString = values[1].Replace("R$", "").Trim();
+        valueString = valueString.Replace(".", "");
+        valueString = valueString.Replace(",", ".");
+        
+        var isValidValue = decimal.TryParse(valueString, out var value);
+        if (!isValidValue)
+        {
+            Console.WriteLine($"Invalid value format: {valueString}");
+            continue;
+        }
+        var paymentMethod = values[2];
+        var tag = values[3];
+
+        var transaction = new CreateTransactionRequest(description,0, new DateTime(2023, 01, 01), paymentMethod, tag, value, "string");
+
+        await mediator.Send(transaction);
+    }
 });
 
 
