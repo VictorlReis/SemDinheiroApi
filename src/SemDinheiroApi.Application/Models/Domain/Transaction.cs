@@ -12,10 +12,8 @@ public class Transaction
     public string Description { get; set; }
     public TransactionType Type { get; set; }
     public DateTime StartDate { get; set; }
-    public DateTime? EndDate { get; set; }
     public string PaymentMethod { get; set; }
-    public int Month { get; set; }
     public string Tag { get; set; } 
     public decimal Value { get; set; }
-    public string UserId { get; set; } // Este é o ID do usuário do provedor OAuth
+    public string UserId { get; set; }
 }

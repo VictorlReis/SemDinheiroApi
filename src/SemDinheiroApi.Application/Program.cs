@@ -123,33 +123,7 @@ app.MapPost("/transactions/csv", async (IFormFile file, IMediator mediator) =>
 
 app.MapPost("transaction/seed", async (IMediator mediator) =>
 {
-    string[] lines =
-    {
-        "test 1/3\tR$ 48,00\ttest\ttest"
-    };
-    
-    foreach (var line in lines)
-    {
-        var values = line.Split('\t');
-        
-        var description = values[0];
-        var valueString = values[1].Replace("R$", "").Trim();
-        valueString = valueString.Replace(".", "");
-        valueString = valueString.Replace(",", ".");
-        
-        var isValidValue = decimal.TryParse(valueString, out var value);
-        if (!isValidValue)
-        {
-            Console.WriteLine($"Invalid value format: {valueString}");
-            continue;
-        }
-        var paymentMethod = values[2];
-        var tag = values[3];
 
-        var transaction = new CreateTransactionRequest(description,0, new DateTime(2023, 01, 01), paymentMethod, tag, value, "string");
-
-        await mediator.Send(transaction);
-    }
 });
 
 
