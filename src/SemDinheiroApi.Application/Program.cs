@@ -4,6 +4,8 @@ using CsvHelper;
 using CsvHelper.Configuration;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SemDinheiroApi.Requests;
@@ -115,15 +117,41 @@ app.MapPost("/transactions/csv", async (IFormFile file, IMediator mediator) =>
         if(valor < 0) continue;
 
         await mediator.Send(new CreateTransactionRequest(csvTransaction.Estabelecimento, TransactionType.Expense,
-                new DateTime(2023, 06, 01), "xXP", "zXp", valor, userId));
+                new DateTime(2023, 06, 01), "xp csv", "xp csv", valor, userId));
     }
 
     return Results.Ok(transactions);
 });
 
-app.MapPost("transaction/seed", async (IMediator mediator) =>
+app.MapPost("transaction/seed", async (IFormFile file, IMediator mediator) =>
 {
+    
+    if (file.Length <= 0)
+    {
+        return Results.BadRequest("No file was uploaded.");
+    }
 
+    using (var reader = new StreamReader(file.OpenReadStream()))
+    {
+        while (await reader.ReadLineAsync() is { } line)
+        {
+            var values = line.Split(',');
+            
+            var description = values[1];
+            var type = int.Parse(values[2]);
+            var startDate = DateTime.Parse(values[3]);
+            var paymentMethod = values[4];
+            var tag = values[5];
+            var value = decimal.Parse(values[6]);
+            var userId = values[7];
+
+            var transaction = new CreateTransactionRequest(description, (TransactionType)type, startDate, paymentMethod, tag, value, userId);
+
+            await mediator.Send(transaction);
+        }
+    }
+    
+    return Results.Ok();
 });
 
 
